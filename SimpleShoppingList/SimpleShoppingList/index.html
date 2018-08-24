@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <link href="styles.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    <script src="Scripts/jquery-3.3.1.min.js"></script>
+    <script src="app.js"></script>
+    <title>Shopping List asp.net</title>
+</head>
+<body>
+    <div id="create">
+         <h1>Shopping List</h1>
+        <div class="input1">
+            <input type="text" id="shoppinglist_name" placeholder="New List" />
+            <button class="btn btn_create" onclick="createShoppingList()">Create</button>
+        </div>
+    </div>
+    <div id="list" class="list">
+        <h1 id="list_title">New List</h1>
+        <div class="input2">
+            <input id="newItemInput" type="text" placeholder="New Item" />
+            <button class="btn" onclick="addItem()">Add</button>
+        </div>
+        <div class="list_display">
+            <ul id="shoppingList_items">
+                <li></li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
