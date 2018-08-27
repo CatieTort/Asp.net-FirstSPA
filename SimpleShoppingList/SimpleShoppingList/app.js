@@ -34,11 +34,19 @@ function showShoppingList() {
 function addItem() {
     var newItem = {};
     newItem.name = $("#newItemInput").val();
-    currentList.items.push(newItem);
-    console.log(currentList);
+    newItem.shoppingListId = currentList.id;
 
-    drawItems();
-    $("#newItemInput").val('');
+    $.ajax({
+        type: "POST",
+        dataType: "json",
+        url: "api/Item/",
+        data: newItem,
+        success: function (result) {
+            currentList = result;
+            drawItems();
+            $("#newItemInput").val('');
+        }
+    });
 }
 
 function drawItems() {
@@ -46,27 +54,53 @@ function drawItems() {
    
     for (var i = 0; i < currentList.items.length; i++) {
         var currentItem = currentList.items[i];
-        var $li = $("<li>").html("<p id='"+'item_'+ i +"'>" + currentItem.name + "</p>");
-        var $deleteBtn = $("<button class='btn' onclick='deleteItem("+ i +")'>Delete</button>").appendTo($li);
-        var $checkBtn = $("<button class='btn' onclick='checkItem("+ i +")'>Check</button>").appendTo($li);
+        var $p = $("<p id='" + 'item_' + i + "'>" + currentItem.name + "</p>");
+        var $li = $("<li>").html($p);
+        var $deleteBtn = $("<button class='btn' onclick='deleteItem("+ currentItem.id +")'>Delete</button>").appendTo($li);
+        var $checkBtn = $("<button class='btn' onclick='checkItem("+ currentItem.id +")'>Check</button>").appendTo($li);
+
+        if (currentItem.checked) {
+            $p.addClass("checked");
+        }
 
         $li.appendTo($list);
     }
 }
 
-function deleteItem(index) {
-    currentList.items.splice(index, 1);
-    drawItems();
+function deleteItem(itemId) {
+    $.ajax({
+        type: "DELETE",
+        dataType: "json",
+        url: "api/Item/" + itemId,
+        success: function (result) {
+            currentList = result;
+            drawItems();
+        }
+    });
 }
 
-function checkItem(index) {
-    var itemLocation = $("#item_" + index);
+function checkItem(itemId) {
+    var changedItem = {};
 
-    if (itemLocation.hasClass("checked")) {
-        itemLocation.removeClass("checked");
-    } else {
-        itemLocation.addClass("checked");
+    for (var i = 0; i < currentList.items.length; i++) {
+        if (currentList.items[i].id == itemId) {
+            changedItem = currentList.items[i];
+        }
     }
+
+    changedItem.checked = !changedItem.checked;
+
+    $.ajax({
+        type: "PUT",
+        dataType: "json",
+        url: "api/Item/" + itemId,
+        data: changedItem,
+        success: function (result) {
+            currentList = result;
+            drawItems();
+        }
+    });
+
 }
 
 function getShoppingListById(id) {
