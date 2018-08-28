@@ -8,10 +8,12 @@ function createShoppingList() {
     $.ajax({
         type: "POST",
         dataType: "json",
-        url: "api/ShoppingList/",
+        url: "api/ShoppingListsEF/",
         data: currentList,
         success: function (result) {
+            currentList = result;
             showShoppingList();
+            history.pushState({ id: result.id }, result.name, "?id=" + result.id);
         }
     });
 }
@@ -23,7 +25,9 @@ function showShoppingList() {
     $("#create").hide();
     $("#list").show();
 
+    $("#newItemInput").val("");
     $("#newItemInput").focus();
+    $("#newItemInput").unbind("keyup");
     $("#newItemInput").keyup(function (e) {
         if (e.keyCode == 13) {
             addItem();
@@ -39,7 +43,7 @@ function addItem() {
     $.ajax({
         type: "POST",
         dataType: "json",
-        url: "api/Item/",
+        url: "api/ItemsEF/",
         data: newItem,
         success: function (result) {
             currentList = result;
@@ -71,7 +75,7 @@ function deleteItem(itemId) {
     $.ajax({
         type: "DELETE",
         dataType: "json",
-        url: "api/Item/" + itemId,
+        url: "api/ItemsEF/" + itemId,
         success: function (result) {
             currentList = result;
             drawItems();
@@ -93,10 +97,10 @@ function checkItem(itemId) {
     $.ajax({
         type: "PUT",
         dataType: "json",
-        url: "api/Item/" + itemId,
+        url: "api/ItemsEF/" + itemId,
         data: changedItem,
         success: function (result) {
-            currentList = result;
+            changedItem = result;
             drawItems();
         }
     });
@@ -107,7 +111,7 @@ function getShoppingListById(id) {
     $.ajax({
         type: "GET",
         dataType: "json",
-        url: "api/ShoppingList/" + id,
+        url: "api/ShoppingListsEF/" + id,
         success: function (result) {
             currentList = result;
             showShoppingList();
@@ -116,20 +120,38 @@ function getShoppingListById(id) {
     });
 }
 
-$(document).ready(function () {
-    console.info("ready");
-    $("#shoppinglist_name").focus();
-    $("#shoppinglist_name").keyup(function (e) {
-        if (e.keyCode == 13) {
-            createShoppingList();
-        }
-    })
+    function hideShoppingList() {
+        $("#create").show();
+        $("#list").hide();
 
-    var pageURL = window.location.href;
-    var idIndex = pageURL.indexOf("?id=");
-    if (idIndex != -1) {
-        getShoppingListById(pageURL.substring(idIndex + 4));
+        $("#shoppinglist_name").val("");
+        $("#shoppinglist_name").focus();
+        $("#shoppinglist_name").unbind("keyup");
+        $("#shoppinglist_name").keyup(function (e) {
+            if (e.keyCode == 13) {
+                createShoppingList();
+            }
+        });
     }
 
-    $("#list").hide();
-});
+    $(document).ready(function () {
+        console.info("ready");
+
+        hideShoppingList();
+
+
+        var pageURL = window.location.href;
+        var idIndex = pageURL.indexOf("?id=");
+        if (idIndex != -1) {
+            getShoppingListById(pageURL.substring(idIndex + 4));
+        }
+
+        window.onpopstate = function (event) {
+            if (event.state == null) {
+                hideShoppingList();
+            }
+            else {
+                getShoppingListById(event.state.id);
+            }
+        }
+    });

@@ -78,3 +78,5 @@ _[Ss]cripts
 /SimpleShoppingList/.vs/SimpleShoppingList/v15/Server/sqlite3/storage.ide
 /SimpleShoppingList/.vs/SimpleShoppingList/v15/Server/sqlite3/storage.ide-wal
 /SimpleShoppingList/.vs/SimpleShoppingList/v15/Server/sqlite3/storage.ide-shm
+/SimpleShoppingList/SimpleShoppingList/App_Data/SimpleShoppingListContext-20180828092144.mdf
+/SimpleShoppingList/SimpleShoppingList/App_Data/SimpleShoppingListContext-20180828092144_log.ldf
